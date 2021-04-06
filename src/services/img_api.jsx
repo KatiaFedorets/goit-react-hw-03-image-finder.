@@ -5,7 +5,8 @@ const fetchImg = ({ searchQuery, pageNumber }) => {
 
   return axios
     .get(
-      `https://pixabay.com/api/?q=${searchQuery}&page=${pageNumber}&key=${API_KEY}&image_type=photo&orientation=horizontal&per_page=15`,
+      // `https://pixabay.com/api/?q=${searchQuery}&page=${pageNumber}&key=${API_KEY}&image_type=photo&orientation=horizontal&per_page=12`,
+      `https://pixabay.com/api/?q=${searchQuery}&page=1&key=${API_KEY}&image_type=photo&orientation=horizontal&per_page=12`,
     )
     .then(response => response.data);
 };
