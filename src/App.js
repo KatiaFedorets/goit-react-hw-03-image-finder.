@@ -7,22 +7,35 @@ import styles from './App.module.css';
 import Searchbar from './Searchbar/Searchbar';
 import Modal from './Modal/Modal';
 import ImageGallery from './ImageGallery/ImageGallery';
+import Button from './Button/Button';
 import ImgApi from './services/img_api';
 
 class App extends Component {
   state = {
     img: [],
     searchQuery: '',
+    currentPage: 1,
     showModal: false,
   };
 
   onSubmitForm = ({ query }) => {
     this.setState({ searchQuery: query });
-    ImgApi.fetchImg(this.state.searchQuery).then(response => {
-      this.setState({ img: response.hits });
-      // console.log(response.hits);
+
+    const { currentPage, searchQuery } = this.state;
+    const options = { searchQuery, currentPage };
+
+    ImgApi.fetchImg(options).then(response => {
+      this.setState(prevState => ({
+        img: response.hits,
+        currentPage: prevState + 1,
+      }));
+      console.log(this.state.searchQuery);
     });
   };
+
+  // onClick = () => {
+  //   this.fetchImg(this.state.searchQuery, this.state.currentPage);
+  // };
 
   toggleModal = () => {
     this.setState(({ showModal }) => ({
@@ -41,6 +54,7 @@ class App extends Component {
             <p>lorem</p>
           </Modal>
         )}
+        <Button onClick={this.fetchImg} />
         <Loader
           type="Puff"
           color="#00BFFF"
