@@ -1,5 +1,8 @@
-const Button = onClick => (
-  <button type="button" onClick={onClick}>
+import styles from "./Button.module.css";
+
+
+const Button = ({ onClick }) => (
+    <button type="button" onClick={onClick} className={styles.Button}>
     Load more
   </button>
 );
