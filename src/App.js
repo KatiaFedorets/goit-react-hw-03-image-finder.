@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-// import axios from 'axios';
 import 'normalize.css';
 import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
 import Loader from 'react-loader-spinner';
@@ -17,11 +16,17 @@ class App extends Component {
     currentPage: 1,
     error: null,
     showModal: false,
+    largeImgUrl: null,
   };
 
   componentDidUpdate(prevProps, prevState) {
-    if (this.prevState !== this.state.searchQuery) {
+    console.log(prevState.searchQuery);
+    if (prevState.searchQuery !== this.state.searchQuery) {
       this.fetchImages();
+    }
+
+    if (prevState.currentPage !== this.setState.currentPage) {
+      this.smoothScroll();
     }
   }
 
@@ -53,25 +58,44 @@ class App extends Component {
       .finally(() => this.setState({ isLoading: false }));
   };
 
-  toggleModal = () => {
-    this.setState(({ showModal }) => ({
-      showModal: !showModal,
-    }));
+  smoothScroll = () => {
+    window.scrollTo({
+      top: document.documentElement.scrollHeight,
+      behavior: 'smooth',
+    });
+  };
+
+  setBigImageUrl = url => {
+    this.setState({ largeImgUrl: url });
+    if (url) window.addEventListener('keydown', this.closeModal);
+  };
+
+  closeModal = e => {
+    window.removeEventListener('keydown', this.closeModal);
+
+    if (e.code === 'Escape') {
+      this.setState({ largeImgUrl: null });
+    } else if (e.target.src !== this.state.largeImgUrl) {
+      this.setState({ largeImgUrl: null });
+    }
   };
 
   render() {
-    const { showModal, images, isLoading } = this.state;
+    const { images, isLoading, largeImgUrl } = this.state;
     return (
       <div className={styles.App}>
         <Searchbar onSubmit={this.onSubmitForm} />
-        <ImageGallery images={this.state.images} />
-        {showModal && (
-          <Modal onClose={this.toggleModal}>
-            <p>lorem</p>
-          </Modal>
-        )}
+        <ImageGallery
+          images={this.state.images}
+          onSetBigImageUrl={this.setBigImageUrl}
+        />
         {images.length > 0 && !isLoading && (
           <Button onClick={this.fetchImages} />
+        )}
+        {largeImgUrl && (
+          <Modal onCloseModal={this.closeModal}>
+            <img src={largeImgUrl} alt="modalImg"></img>
+          </Modal>
         )}
         {isLoading && (
           <Loader
