@@ -31,6 +31,7 @@ class App extends Component {
   }
 
   onSubmitForm = query => {
+    console.log(query);
     this.setState({
       searchQuery: query,
       currentPage: 1,
